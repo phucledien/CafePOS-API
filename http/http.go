@@ -10,6 +10,7 @@ import (
 	httptransport "github.com/go-kit/kit/transport/http"
 
 	"github.com/phucledien/cafe-pos/endpoints"
+	tableDecode "github.com/phucledien/cafe-pos/http/decode/json/table"
 	userDecode "github.com/phucledien/cafe-pos/http/decode/json/user"
 )
 
@@ -70,6 +71,39 @@ func NewHTTPHandler(endpoints endpoints.Endpoints,
 		r.Delete("/{user_id}", httptransport.NewServer(
 			endpoints.DeleteUser,
 			userDecode.DeleteRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
+	})
+
+	r.Route("/tables", func(r chi.Router) {
+		r.Get("/", httptransport.NewServer(
+			endpoints.FindAllTable,
+			tableDecode.FindAllRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
+		r.Get("/{table_id}", httptransport.NewServer(
+			endpoints.FindTable,
+			tableDecode.FindRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
+		r.Post("/", httptransport.NewServer(
+			endpoints.CreateTable,
+			tableDecode.CreateRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
+		r.Put("/{table_id}", httptransport.NewServer(
+			endpoints.UpdateTable,
+			tableDecode.UpdateRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
+		r.Delete("/{table_id}", httptransport.NewServer(
+			endpoints.DeleteTable,
+			tableDecode.DeleteRequest,
 			encodeResponse,
 			options...,
 		).ServeHTTP)

@@ -16,6 +16,7 @@ import (
 	"github.com/phucledien/cafe-pos/endpoints"
 	serviceHttp "github.com/phucledien/cafe-pos/http"
 	"github.com/phucledien/cafe-pos/service"
+	tableSvc "github.com/phucledien/cafe-pos/service/table"
 	userSvc "github.com/phucledien/cafe-pos/service/user"
 )
 
@@ -57,6 +58,9 @@ func main() {
 				userSvc.NewPGService(pgDB),
 				userSvc.ValidationMiddleware(),
 			).(userSvc.Service),
+			TableService: service.Compose(
+				tableSvc.NewPGService(pgDB),
+			).(tableSvc.Service),
 		}
 	)
 	defer closeDB()
