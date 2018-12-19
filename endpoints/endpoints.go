@@ -4,6 +4,7 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	"github.com/phucledien/cafe-pos/service"
 
+	"github.com/phucledien/cafe-pos/endpoints/drink"
 	"github.com/phucledien/cafe-pos/endpoints/table"
 	"github.com/phucledien/cafe-pos/endpoints/user"
 )
@@ -21,6 +22,12 @@ type Endpoints struct {
 	CreateTable  endpoint.Endpoint
 	UpdateTable  endpoint.Endpoint
 	DeleteTable  endpoint.Endpoint
+
+	FindDrink    endpoint.Endpoint
+	FindAllDrink endpoint.Endpoint
+	CreateDrink  endpoint.Endpoint
+	UpdateDrink  endpoint.Endpoint
+	DeleteDrink  endpoint.Endpoint
 }
 
 // MakeServerEndpoints returns an Endpoints struct
@@ -37,5 +44,11 @@ func MakeServerEndpoints(s service.Service) Endpoints {
 		CreateTable:  table.MakeCreateEndpoint(s),
 		UpdateTable:  table.MakeUpdateEndpoint(s),
 		DeleteTable:  table.MakeDeleteEndpoint(s),
+
+		FindDrink:    drink.MakeFindEndpoint(s),
+		FindAllDrink: drink.MakeFindAllEndpoint(s),
+		CreateDrink:  drink.MakeCreateEndpoint(s),
+		UpdateDrink:  drink.MakeUpdateEndpoint(s),
+		DeleteDrink:  drink.MakeDeleteEndpoint(s),
 	}
 }
