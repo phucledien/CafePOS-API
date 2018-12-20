@@ -6,7 +6,7 @@ CREATE TABLE "tables" (
     "created_at" timestamptz DEFAULT now(),
     "deleted_at" timestamptz,
     "name" text UNIQUE NOT NULL,
-    "status" boolean DEFAULT false,
+    "status" int DEFAULT 0,
     PRIMARY KEY ("id")
 ) WITH (oids = false);
 

@@ -13,7 +13,7 @@ import (
 // CreateData data for CreateTable
 type CreateData struct {
 	Name   string `json:"name"`
-	Status bool   `json:"status"`
+	Status int    `json:"status"`
 }
 
 // CreateRequest request struct for CreateTable
@@ -96,11 +96,51 @@ func MakeFindAllEndpoint(s service.Service) endpoint.Endpoint {
 	}
 }
 
+// GetEmptyTablesRequest request struct for find all Table
+type GetEmptyTablesRequest struct{}
+
+// GetEmptyTablesResponse response struct for find all Table
+type GetEmptyTablesResponse struct {
+	Tables []domain.Table `json:"tables"`
+}
+
+// MakeGetEmptyTablesEndpoint make endpoint for find all Table
+func MakeGetEmptyTablesEndpoint(s service.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		_ = request.(GetEmptyTablesRequest)
+		tables, err := s.TableService.GetEmptyTables(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return GetEmptyTablesResponse{Tables: tables}, nil
+	}
+}
+
+// GetPreparingTablesRequest request struct for find all Table
+type GetPreparingTablesRequest struct{}
+
+// GetPreparingTablesResponse response struct for find all Table
+type GetPreparingTablesResponse struct {
+	Tables []domain.Table `json:"tables"`
+}
+
+// MakeGetPreparingTablesEndpoint make endpoint for find all Table
+func MakeGetPreparingTablesEndpoint(s service.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		_ = request.(GetPreparingTablesRequest)
+		tables, err := s.TableService.GetPreparingTables(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return GetPreparingTablesResponse{Tables: tables}, nil
+	}
+}
+
 // UpdateData data for Update Table
 type UpdateData struct {
 	ID     domain.UUID `json:"-"`
 	Name   string      `json:"name"`
-	Status bool        `json:"status"`
+	Status int         `json:"status"`
 }
 
 // UpdateRequest request struct for update Table
@@ -131,6 +171,35 @@ func MakeUpdateEndpoint(s service.Service) endpoint.Endpoint {
 		}
 
 		return UpdateResponse{Table: *res}, nil
+	}
+}
+
+// UpdateStatusRequest request struct for UpdateStatus a table
+type UpdateStatusRequest struct {
+	TableID domain.UUID
+	Status  int `json:"status"`
+}
+
+// UpdateStatusResponse response struct for UpdateStatus a table
+type UpdateStatusResponse struct {
+	Status string `json:"status"`
+}
+
+// MakeUpdateStatusEndpoint make endpoint for UpdateStatus a Table
+func MakeUpdateStatusEndpoint(s service.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		var (
+			req     = request.(UpdateStatusRequest)
+			tableID = req.TableID
+			status  = req.Status
+		)
+
+		err := s.TableService.UpdateStatus(ctx, tableID, status)
+		if err != nil {
+			return nil, err
+		}
+
+		return UpdateStatusResponse{"success"}, nil
 	}
 }
 

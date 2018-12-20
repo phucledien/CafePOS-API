@@ -25,6 +25,16 @@ func FindAllRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	return tableEndpoint.FindAllRequest{}, nil
 }
 
+// GetEmptyTablesRequest .
+func GetEmptyTablesRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	return tableEndpoint.GetEmptyTablesRequest{}, nil
+}
+
+// GetPreparingTablesRequest .
+func GetPreparingTablesRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	return tableEndpoint.GetPreparingTablesRequest{}, nil
+}
+
 // CreateRequest .
 func CreateRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var req tableEndpoint.CreateRequest
@@ -46,6 +56,23 @@ func UpdateRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	}
 
 	req.Table.ID = tableID
+
+	return req, nil
+}
+
+// UpdateStatusRequest .
+func UpdateStatusRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	tableID, err := domain.UUIDFromString(chi.URLParam(r, "table_id"))
+	if err != nil {
+		return nil, err
+	}
+
+	var req tableEndpoint.UpdateStatusRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		return nil, err
+	}
+	req.TableID = tableID
 
 	return req, nil
 }

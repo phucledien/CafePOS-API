@@ -11,6 +11,7 @@ import (
 
 	"github.com/phucledien/cafe-pos/endpoints"
 	drinkDecode "github.com/phucledien/cafe-pos/http/decode/json/drink"
+	orderDecode "github.com/phucledien/cafe-pos/http/decode/json/order"
 	tableDecode "github.com/phucledien/cafe-pos/http/decode/json/table"
 	userDecode "github.com/phucledien/cafe-pos/http/decode/json/user"
 )
@@ -84,6 +85,18 @@ func NewHTTPHandler(endpoints endpoints.Endpoints,
 			encodeResponse,
 			options...,
 		).ServeHTTP)
+		r.Get("/empty", httptransport.NewServer(
+			endpoints.GetEmptyTables,
+			tableDecode.GetEmptyTablesRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
+		r.Get("/preparing", httptransport.NewServer(
+			endpoints.GetPreparingTables,
+			tableDecode.GetPreparingTablesRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
 		r.Get("/{table_id}", httptransport.NewServer(
 			endpoints.FindTable,
 			tableDecode.FindRequest,
@@ -99,6 +112,12 @@ func NewHTTPHandler(endpoints endpoints.Endpoints,
 		r.Put("/{table_id}", httptransport.NewServer(
 			endpoints.UpdateTable,
 			tableDecode.UpdateRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
+		r.Put("/{table_id}/status", httptransport.NewServer(
+			endpoints.UpdateStatusTable,
+			tableDecode.UpdateStatusRequest,
 			encodeResponse,
 			options...,
 		).ServeHTTP)
@@ -138,6 +157,21 @@ func NewHTTPHandler(endpoints endpoints.Endpoints,
 		r.Delete("/{drink_id}", httptransport.NewServer(
 			endpoints.DeleteDrink,
 			drinkDecode.DeleteRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
+	})
+
+	r.Route("/orders", func(r chi.Router) {
+		r.Get("/", httptransport.NewServer(
+			endpoints.FindAllOrder,
+			orderDecode.FindAllRequest,
+			encodeResponse,
+			options...,
+		).ServeHTTP)
+		r.Post("/", httptransport.NewServer(
+			endpoints.CreateOrder,
+			orderDecode.CreateRequest,
 			encodeResponse,
 			options...,
 		).ServeHTTP)
