@@ -17,6 +17,7 @@ import (
 	serviceHttp "github.com/phucledien/cafe-pos/http"
 	"github.com/phucledien/cafe-pos/service"
 	drinkSvc "github.com/phucledien/cafe-pos/service/drink"
+	orderSvc "github.com/phucledien/cafe-pos/service/order"
 	tableSvc "github.com/phucledien/cafe-pos/service/table"
 	userSvc "github.com/phucledien/cafe-pos/service/user"
 )
@@ -65,6 +66,9 @@ func main() {
 			DrinkService: service.Compose(
 				drinkSvc.NewPGService(pgDB),
 			).(drinkSvc.Service),
+			OrderService: service.Compose(
+				orderSvc.NewPGService(pgDB),
+			).(orderSvc.Service),
 		}
 	)
 	defer closeDB()
